@@ -1,51 +1,6 @@
 {
 	"name": "pl_bronze_cp_from_onprim_to_azure_blob",
 	"properties": {
-		"activities": [
-			{
-				"name": "cp_data_from_onprim_to_cloud",
-				"type": "Copy",
-				"dependsOn": [],
-				"policy": {
-					"timeout": "0.12:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"source": {
-						"type": "SqlServerSource",
-						"queryTimeout": "02:00:00",
-						"partitionOption": "None"
-					},
-					"sink": {
-						"type": "JsonSink",
-						"storeSettings": {
-							"type": "AzureBlobStorageWriteSettings",
-							"copyBehavior": "FlattenHierarchy"
-						},
-						"formatSettings": {
-							"type": "JsonWriteSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "ds_sql_server_src_to_azure_blob",
-						"type": "DatasetReference"
-					}
-				],
-				"outputs": [
-					{
-						"referenceName": "ds_blob_tgt_from_onprim_sql_server_to_azure_blob",
-						"type": "DatasetReference"
-					}
-				]
-			}
-		],
 		"folder": {
 			"name": "my_workflow"
 		},
