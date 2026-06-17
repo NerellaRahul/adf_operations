@@ -1,0 +1,155 @@
+{
+	"name": "pl_bronze_cp_list_from_sql_server_to_azure_blob_csv",
+	"properties": {
+		"activities": [
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlServerSource",
+						"sqlReaderQuery": "SELECT\r\n    s.name AS schema_name,\r\n    t.name AS table_name,\r\n    CONCAT('[', s.name, '].[', t.name, ']') AS full_table_name,\r\n    CONCAT(s.name, '_', t.name, '.csv') AS csv_file_name\r\nFROM sys.tables t\r\nJOIN sys.schemas s\r\n    ON t.schema_id = s.schema_id\r\nWHERE t.is_ms_shipped = 0\r\nORDER BY s.name, t.name;",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "ds_dp_scr_list_tables_on_prem_to_azBlob_csv",
+						"type": "DatasetReference"
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "Filter1",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Lookup1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Lookup1').output.value",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@not(equals(item().table_name, 'EmployeeSource'))",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Filter1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Filter1').output.value",
+						"type": "Expression"
+					},
+					"batchCount": 6,
+					"activities": [
+						{
+							"name": "Copy data1",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"queryTimeout": "02:00:00",
+									"partitionOption": "None"
+								},
+								"sink": {
+									"type": "DelimitedTextSink",
+									"storeSettings": {
+										"type": "AzureBlobStorageWriteSettings",
+										"copyBehavior": "FlattenHierarchy"
+									},
+									"formatSettings": {
+										"type": "DelimitedTextWriteSettings",
+										"quoteAllText": true,
+										"fileExtension": ".txt"
+									}
+								},
+								"enableStaging": false,
+								"translator": {
+									"type": "TabularTranslator",
+									"typeConversion": true,
+									"typeConversionSettings": {
+										"allowDataTruncation": true,
+										"treatBooleanAsNumber": false
+									}
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "ds_dp_scr_az_sql_server_to_blob",
+									"type": "DatasetReference",
+									"parameters": {
+										"tablename": {
+											"value": "@item().table_name",
+											"type": "Expression"
+										},
+										"schemaname": {
+											"value": "@item().schema_name",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ds_dp_txt_azblog_from_onprem",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_folder_path": {
+											"value": "@concat('onpremoutput/', formatDateTime(pipeline().TriggerTime,'yyyyMMddHHmmss'))",
+											"type": "Expression"
+										},
+										"p_filename": {
+											"value": "@item().csv_file_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			}
+		],
+		"folder": {
+			"name": "my_workflow"
+		},
+		"annotations": []
+	}
+}

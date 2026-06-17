@@ -1,0 +1,20 @@
+{
+	"name": "ds_dp_scr_list_tables_on_prem_to_azBlob_csv",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer_to_azureBlob_csv",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"server": "localhost\\SQLEXPRESS",
+				"db": "OnPremDB",
+				"username": "adf_user"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo"
+		}
+	}
+}
