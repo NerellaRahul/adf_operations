@@ -1,0 +1,35 @@
+{
+	"name": "LS_SqlServer_src_to_Azure_blob",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"parameters": {
+			"db": {
+				"type": "string",
+				"defaultValue": "OnPremDB"
+			},
+			"server": {
+				"type": "string",
+				"defaultValue": "localhost\\SQLEXPRESS"
+			},
+			"username": {
+				"type": "string",
+				"defaultValue": "adf_user"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServer",
+		"typeProperties": {
+			"server": "@{linkedService().server}",
+			"database": "@{linkedService().db}",
+			"encrypt": "optional",
+			"trustServerCertificate": true,
+			"authenticationType": "SQL",
+			"userName": "@{linkedService().username}",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI5NWY1MTE4Ny1iNjcwLTRhMTgtODk0Ny1mYzc4NGZlMzIyOGMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+		},
+		"connectVia": {
+			"referenceName": "integrationRuntime1",
+			"type": "IntegrationRuntimeReference"
+		}
+	}
+}

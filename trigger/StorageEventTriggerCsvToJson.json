@@ -1,0 +1,24 @@
+{
+	"name": "StorageEventTriggerCsvToJson",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Started",
+		"pipelines": [
+			{
+				"pipelineReference": {
+					"referenceName": "csvtojson-pipeline",
+					"type": "PipelineReference"
+				}
+			}
+		],
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/input/blobs/",
+			"ignoreEmptyBlobs": true,
+			"scope": "/subscriptions/d5896615-9dc7-4bd9-99dd-f3fd1f7a954b/resourceGroups/rg-supplychain-dev/providers/Microsoft.Storage/storageAccounts/supplychaindevenvblob1",
+			"events": [
+				"Microsoft.Storage.BlobCreated"
+			]
+		}
+	}
+}

@@ -1,0 +1,22 @@
+{
+	"name": "ds_sql_server_src_to_azure_blob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SqlServer_src_to_Azure_blob",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"db": "OnPremDB",
+				"server": "localhost\\SQLEXPRESS",
+				"username": "adf_user"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "EmployeeSource"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

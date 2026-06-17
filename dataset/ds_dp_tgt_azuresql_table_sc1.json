@@ -1,0 +1,53 @@
+{
+	"name": "ds_dp_tgt_azuresql_table_sc1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dp_azuretable_sc_one",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TARGET_DS"
+		},
+		"annotations": [],
+		"type": "AzureSqlTable",
+		"schema": [
+			{
+				"name": "emp_id",
+				"type": "int",
+				"precision": 10
+			},
+			{
+				"name": "first_name",
+				"type": "varchar"
+			},
+			{
+				"name": "last_name",
+				"type": "varchar"
+			},
+			{
+				"name": "department",
+				"type": "varchar"
+			},
+			{
+				"name": "salary",
+				"type": "decimal",
+				"precision": 10,
+				"scale": 2
+			},
+			{
+				"name": "date_of_joining",
+				"type": "date"
+			},
+			{
+				"name": "load_timestamp",
+				"type": "datetime2",
+				"scale": 7
+			}
+		],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "modified_employee"
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

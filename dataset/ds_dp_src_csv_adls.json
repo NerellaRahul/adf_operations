@@ -1,0 +1,41 @@
+{
+	"name": "ds_dp_src_csv_adls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dp_adls",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "SRC_DS"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "dim_departments.csv",
+				"folderPath": "glass",
+				"fileSystem": "silver"
+			},
+			"columnDelimiter": ",",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": "\""
+		},
+		"schema": [
+			{
+				"name": "department_id",
+				"type": "String"
+			},
+			{
+				"name": "department_name",
+				"type": "String"
+			},
+			{
+				"name": "business_unit",
+				"type": "String"
+			}
+		]
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

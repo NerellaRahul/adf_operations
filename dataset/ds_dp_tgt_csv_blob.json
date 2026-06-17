@@ -1,0 +1,27 @@
+{
+	"name": "ds_dp_tgt_csv_blob",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dp_blob",
+			"type": "LinkedServiceReference"
+		},
+		"folder": {
+			"name": "TARGET_DS"
+		},
+		"annotations": [],
+		"type": "DelimitedText",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"container": "bronze"
+			},
+			"columnDelimiter": ",",
+			"compressionCodec": "bzip2",
+			"escapeChar": "\\",
+			"firstRowAsHeader": true,
+			"quoteChar": ""
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

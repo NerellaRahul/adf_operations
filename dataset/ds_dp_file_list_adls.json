@@ -1,0 +1,20 @@
+{
+	"name": "ds_dp_file_list_adls",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "ls_dp_adls",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Excel",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileSystem": "samplefiles"
+			},
+			"sheetIndex": 0
+		},
+		"schema": []
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

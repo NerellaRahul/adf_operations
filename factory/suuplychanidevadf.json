@@ -1,0 +1,15 @@
+{
+	"name": "suuplychanidevadf",
+	"properties": {
+		"trustModeClaimForMi": {
+			"value": "Disabled",
+			"editable": true
+		}
+	},
+	"location": "eastus",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "8d21ba19-7651-4d33-9537-c163f71295dc",
+		"tenantId": "422e3c96-54f8-4657-ab42-6298091816dc"
+	}
+}

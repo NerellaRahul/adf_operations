@@ -1,0 +1,229 @@
+{
+	"name": "pl_bronze_cp_from_csv_to_az_db_table_sc1",
+	"properties": {
+		"activities": [
+			{
+				"name": "at_cp_from_csv_sc1",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "DelimitedTextSource",
+						"additionalColumns": [
+							{
+								"name": "Last_Modified_date",
+								"value": {
+									"value": "@utcNow()",
+									"type": "Expression"
+								}
+							}
+						],
+						"storeSettings": {
+							"type": "AzureBlobStorageReadSettings",
+							"recursive": true,
+							"enablePartitionDiscovery": false
+						},
+						"formatSettings": {
+							"type": "DelimitedTextReadSettings"
+						}
+					},
+					"sink": {
+						"type": "AzureSqlSink",
+						"writeBehavior": "insert",
+						"sqlWriterUseTableLock": false,
+						"tableOption": "autoCreate",
+						"disableMetricsCollection": false
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"typeConversion": true,
+						"typeConversionSettings": {
+							"allowDataTruncation": true,
+							"treatBooleanAsNumber": false
+						}
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "ds_dp_src_csv_blob_sc1",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ds_dp_tgt_azuresql_table_sc1",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "sc_to_add_extra_row_timestamp",
+				"type": "Script",
+				"state": "Inactive",
+				"onInactiveMarkAs": "Succeeded",
+				"dependsOn": [
+					{
+						"activity": "at_cp_from_csv_sc1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "ls_dp_azure_sql_sc_one",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "Query",
+							"text": "INSERT INTO dbo.TGT_EMP_LOAD_SC1\n(\n    emp_id,\n    first_name,\n    last_name,\n    department,\n    salary,\n    date_of_joining\n)\nVALUES\n(\n    999,\n    'Dynamic',\n    'Employee',\n    'System',\n    0,\n    CAST(GETDATE() AS DATE)\n);"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "source_count",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "at_cp_from_csv_sc1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "sourceCount",
+					"value": {
+						"value": "@activity('at_cp_from_csv_sc1').output.rowsRead",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "target_count",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "at_cp_from_csv_sc1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "target_count",
+					"value": {
+						"value": "@activity('at_cp_from_csv_sc1').output.rowsCopied",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "If Condition1",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "source_count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "target_count",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(variables('sourceCount'),variables('target_count'))",
+						"type": "Expression"
+					},
+					"ifFalseActivities": [
+						{
+							"name": "Failed_Load",
+							"description": "Print loaded successfully",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Status",
+								"value": "The load got Failed !"
+							}
+						}
+					],
+					"ifTrueActivities": [
+						{
+							"name": "Success_Load",
+							"description": "Print loaded successfully",
+							"type": "SetVariable",
+							"dependsOn": [],
+							"policy": {
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"variableName": "Status",
+								"value": "The load succeeded and the source , target count matches"
+							}
+						}
+					]
+				}
+			}
+		],
+		"variables": {
+			"sourceCount": {
+				"type": "Integer"
+			},
+			"target_count": {
+				"type": "Integer"
+			},
+			"Status": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "assignment"
+		},
+		"annotations": [],
+		"lastPublishTime": "2026-06-10T12:04:31Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
