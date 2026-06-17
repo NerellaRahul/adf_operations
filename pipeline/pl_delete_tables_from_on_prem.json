@@ -1,0 +1,57 @@
+{
+	"name": "pl_delete_tables_from_on_prem",
+	"properties": {
+		"activities": [
+			{
+				"name": "Script1",
+				"type": "Script",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"linkedServiceName": {
+					"referenceName": "SqlServer4",
+					"type": "LinkedServiceReference"
+				},
+				"typeProperties": {
+					"scripts": [
+						{
+							"type": "NonQuery",
+							"text": "DROP TABLE [dbo].[airline.xls];\r\nDROP TABLE [dbo].[alcohol.xls];\r\nDROP TABLE [dbo].[andy.xls];\r\nDROP TABLE [dbo].[asparas.xls];\r\nDROP TABLE [dbo].[bangla.xls];\r\nDROP TABLE [dbo].[beer.xls];\r\nDROP TABLE [dbo].[bond.xls];\r\nDROP TABLE [dbo].[br.xls];\r\nDROP TABLE [dbo].[broiler.xls];\r\nDROP TABLE [dbo].[brumm.xls];\r\nDROP TABLE [dbo].[canada.xls];\r\nDROP TABLE [dbo].[capm2.xls];\r\nDROP TABLE [dbo].[cars.xls];\r\nDROP TABLE [dbo].[cattle.xls];\r\nDROP TABLE [dbo].[consumption.xls];\r\n"
+						}
+					],
+					"scriptBlockExecutionTimeout": "02:00:00"
+				}
+			},
+			{
+				"name": "Execute Pipeline1",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Script1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "pl_bronze_cp_multi_list_to_sql_server_tables",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": []
+	}
+}
