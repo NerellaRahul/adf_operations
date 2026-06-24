@@ -5,7 +5,14 @@
 			{
 				"name": "Notebook1",
 				"type": "DatabricksNotebook",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Set variable1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.12:00:00",
 					"retry": 0,
@@ -14,12 +21,70 @@
 					"secureInput": false
 				},
 				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Shared/Day-2/dataframe",
+					"baseParameters": {
+						"startTime": {
+							"value": "@variables('startTime')",
+							"type": "Expression"
+						}
+					}
+				},
 				"linkedServiceName": {
 					"referenceName": "AzureDatabricks1",
 					"type": "LinkedServiceReference"
 				}
+			},
+			{
+				"name": "Set variable1",
+				"type": "SetVariable",
+				"dependsOn": [],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "startTime",
+					"value": {
+						"value": "@utcNow()",
+						"type": "Expression"
+					}
+				}
+			},
+			{
+				"name": "Set variable2",
+				"type": "SetVariable",
+				"dependsOn": [
+					{
+						"activity": "Notebook1",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"variableName": "notebookOutput",
+					"value": {
+						"value": "@activity('Notebook1').output.runOutput",
+						"type": "Expression"
+					}
+				}
 			}
 		],
+		"variables": {
+			"startTime": {
+				"type": "String"
+			},
+			"notebookOutput": {
+				"type": "Integer"
+			}
+		},
 		"annotations": []
 	}
 }
