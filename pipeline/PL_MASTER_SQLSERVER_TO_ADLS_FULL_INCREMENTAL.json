@@ -1,0 +1,9 @@
+{
+	"name": "PL_MASTER_SQLSERVER_TO_ADLS_FULL_INCREMENTAL",
+	"properties": {
+		"folder": {
+			"name": "real tiem Scenarios"
+		},
+		"annotations": []
+	}
+}

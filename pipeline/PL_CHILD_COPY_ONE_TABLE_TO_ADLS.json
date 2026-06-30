@@ -1,0 +1,56 @@
+{
+	"name": "PL_CHILD_COPY_ONE_TABLE_TO_ADLS",
+	"properties": {
+		"activities": [
+			{
+				"name": "CPY_SQLSERVER_TO_ADLS",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"enableStaging": false
+				}
+			}
+		],
+		"parameters": {
+			"p_batch_id": {
+				"type": "string"
+			},
+			"p_table_id": {
+				"type": "string"
+			},
+			"p_schema_name": {
+				"type": "string"
+			},
+			"p_table_name": {
+				"type": "string"
+			},
+			"p_load_type": {
+				"type": "string"
+			},
+			"p_watermark_column": {
+				"type": "string"
+			},
+			"p_lmw_value": {
+				"type": "string"
+			},
+			"p_target_base_path": {
+				"type": "string"
+			},
+			"p_force_reprocess": {
+				"type": "bool"
+			}
+		},
+		"folder": {
+			"name": "real tiem Scenarios"
+		},
+		"annotations": []
+	}
+}

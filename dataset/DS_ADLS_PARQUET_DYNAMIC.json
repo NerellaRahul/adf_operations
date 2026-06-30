@@ -1,0 +1,37 @@
+{
+	"name": "DS_ADLS_PARQUET_DYNAMIC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_ADLS_RAW",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_folder_path": {
+				"type": "string",
+				"defaultValue": "@dataset().p_folder_path"
+			},
+			"p_file_name": {
+				"type": "string",
+				"defaultValue": "@dataset().p_file_name"
+			}
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().p_file_name",
+					"type": "Expression"
+				},
+				"folderPath": {
+					"value": "@dataset().p_folder_path",
+					"type": "Expression"
+				},
+				"fileSystem": "raw"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": []
+	}
+}

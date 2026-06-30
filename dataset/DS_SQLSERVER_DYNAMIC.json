@@ -1,0 +1,32 @@
+{
+	"name": "DS_SQLSERVER_DYNAMIC",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "LS_SQLSERVER_ONPREM",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"p_schema_name": {
+				"type": "string",
+				"defaultValue": "@dataset().p_schema_name"
+			},
+			"p_table_name": {
+				"type": "string",
+				"defaultValue": "@dataset().p_table_name"
+			}
+		},
+		"annotations": [],
+		"type": "SqlServerTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": {
+				"value": "@dataset().p_schema_name",
+				"type": "Expression"
+			},
+			"table": {
+				"value": "@dataset().p_table_name",
+				"type": "Expression"
+			}
+		}
+	}
+}
