@@ -27,7 +27,75 @@
 						},
 						"table_id": {
 							"value": {
-								"value": "@pipeline().parameters.p_table_id",
+								"value": "@int(pipeline().parameters.p_table_id)",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"schema_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.p_load_type",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"lwm_value": {
+							"value": {
+								"value": "@pipeline().parameters.p_lmw_value",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"status": {
+							"value": "started",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Log_Skipped",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_upsert_table_log]",
+					"storedProcedureParameters": {
+						"batch_id": {
+							"value": {
+								"value": "@pipeline().parameters.p_batch_id",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_id": {
+							"value": {
+								"value": "@int(pipeline().parameters.p_table_id)",
 								"type": "Expression"
 							},
 							"type": "Int32"
@@ -61,26 +129,18 @@
 							"type": "String"
 						},
 						"hwm_value": {
-							"value": "",
+							"value": "@variables('v_hwm_value')",
 							"type": "String"
 						},
 						"target_file_path": {
 							"value": {
-								"value": "@pipeline().parameters.p_target_base_path",
+								"value": "@variables('v_target_file_path')",
 								"type": "Expression"
 							},
 							"type": "String"
 						},
-						"rows_copied": {
-							"value": "",
-							"type": "Int16"
-						},
 						"status": {
-							"value": "started",
-							"type": "String"
-						},
-						"error_message": {
-							"value": "",
+							"value": "successed",
 							"type": "String"
 						}
 					}
@@ -88,6 +148,452 @@
 				"linkedServiceName": {
 					"referenceName": "LS_AZSQL_CONTROL",
 					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Log_Table_Success",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_upsert_table_log]",
+					"storedProcedureParameters": {
+						"batch_id": {
+							"value": {
+								"value": "@pipeline().parameters.p_batch_id",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_id": {
+							"value": {
+								"value": "@int(pipeline().parameters.p_table_id)",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"schema_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.p_load_type",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"lwm_value": {
+							"value": {
+								"value": "@pipeline().parameters.p_lmw_value",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"hwm_value": {
+							"value": "@variables('v_hwm_value')",
+							"type": "String"
+						},
+						"target_file_path": {
+							"value": {
+								"value": "@variables('v_target_file_path')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"rows_copied": {
+							"value": "@activity('COPY_SQL_TO_ADLS').output.rowsCopied",
+							"type": "Int64"
+						},
+						"status": {
+							"value": "successed",
+							"type": "String"
+						},
+						"data_written": {
+							"value": "@activity('COPY_SQL_TO_ADLS').output.dataWritten",
+							"type": "Int64"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Log_Table_Failed",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_upsert_table_log]",
+					"storedProcedureParameters": {
+						"batch_id": {
+							"value": {
+								"value": "@pipeline().parameters.p_batch_id",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_id": {
+							"value": {
+								"value": "@int(pipeline().parameters.p_table_id)",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"schema_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.p_load_type",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"lwm_value": {
+							"value": {
+								"value": "@pipeline().parameters.p_lmw_value",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"hwm_value": {
+							"value": "@variables('v_hwm_value')",
+							"type": "String"
+						},
+						"target_file_path": {
+							"value": {
+								"value": "@variables('v_target_file_path')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"rows_copied": {
+							"value": "0",
+							"type": "Int64"
+						},
+						"status": {
+							"value": "failed",
+							"type": "String"
+						},
+						"error_message": {
+							"value": "@activity('COPY_SQL_TO_ADLS').error.message",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Insert_Manifest_Success",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_insert_manifest]",
+					"storedProcedureParameters": {
+						"batch_id": {
+							"value": {
+								"value": "@pipeline().parameters.p_batch_id",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_id": {
+							"value": {
+								"value": "@int(pipeline().parameters.p_table_id)",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"schema_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.p_load_type",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"lwm_value": {
+							"value": {
+								"value": "@pipeline().parameters.p_lmw_value",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"hwm_value": {
+							"value": "@variables('v_hwm_value')",
+							"type": "String"
+						},
+						"target_file_path": {
+							"value": {
+								"value": "@variables('v_target_file_path')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"rows_coiped": {
+							"value": "@activity('COPY_SQL_TO_ADLS').output.rowsCopied",
+							"type": "Int64"
+						},
+						"status": {
+							"value": "successed",
+							"type": "String"
+						},
+						"data_written": {
+							"value": "@activity('COPY_SQL_TO_ADLS').output.dataWritten",
+							"type": "Int64"
+						},
+						"file_name": {
+							"value": "@variables('v_file_name')",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Insert_Manifest_Failed",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_insert_manifest]",
+					"storedProcedureParameters": {
+						"batch_id": {
+							"value": {
+								"value": "@pipeline().parameters.p_batch_id",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_id": {
+							"value": {
+								"value": "@int(pipeline().parameters.p_table_id)",
+								"type": "Expression"
+							},
+							"type": "Int32"
+						},
+						"schema_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_schema_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"table_name": {
+							"value": {
+								"value": "@pipeline().parameters.p_table_name",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": {
+								"value": "@pipeline().parameters.p_load_type",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"lwm_value": {
+							"value": {
+								"value": "@pipeline().parameters.p_lmw_value",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"hwm_value": {
+							"value": "@variables('v_hwm_value')",
+							"type": "String"
+						},
+						"target_file_path": {
+							"value": {
+								"value": "@variables('v_target_file_path')",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"rows_copied": {
+							"value": "0",
+							"type": "Int64"
+						},
+						"status": {
+							"value": "failed",
+							"type": "String"
+						},
+						"error_message": {
+							"value": "@activity('COPY_SQL_TO_ADLS').error.message",
+							"type": "String"
+						},
+						"data_written": {
+							"value": "0",
+							"type": "Int64"
+						},
+						"file_name": {
+							"value": "@variables('v_file_name')",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "SP_Update_Watermark",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_update_watermark]",
+					"storedProcedureParameters": {
+						"table_id": {
+							"value": "@int(pipeline().parameters.p_table_id)",
+							"type": "Int32"
+						},
+						"batch_id": {
+							"value": "@pipeline().parameters.p_batch_id",
+							"type": "String"
+						},
+						"hwm_value": {
+							"value": "@variables('v_hwm_value')",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "IF_Load_Type_Incremental",
+				"description": "if the Load type is Incremental then uing this expression \n@equals(\ntoUpper(pipeline().parameters.p_load_type),\n'INCREMENTAL'\n)\nget Lookup_Get_HWM\nelse \nSET_HWM_FULL",
+				"type": "IfCondition",
+				"dependsOn": [
+					{
+						"activity": "SP_Table_Started",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"expression": {
+						"value": "@equals(\ntoUpper(pipeline().parameters.p_load_type),\n'INCREMENTAL'\n)",
+						"type": "Expression"
+					},
+					"ifTrueActivities": [
+						{
+							"name": "Lookup_get_HWM",
+							"type": "Lookup",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "SqlServerSource",
+									"sqlReaderQuery": "@concat(\n'SELECT MAX([',\npipeline().parameters.p_watermark_column,\n']) AS hwm_value\nFROM [',\npipeline().parameters.p_schema_name,\n'].[',\npipeline().parameters.p_table_name,\n']\nWHERE [',\npipeline().parameters.p_watermark_column,\n'] > ''',\npipeline().parameters.p_lwm_value,\n''''\n)",
+									"queryTimeout": "02:00:00",
+									"isolationLevel": "ReadCommitted",
+									"partitionOption": "None"
+								},
+								"dataset": {
+									"referenceName": "DS_SQLSERVER_DYNAMIC",
+									"type": "DatasetReference",
+									"parameters": {
+										"p_schema_name": "@dataset().p_schema_name",
+										"p_table_name": "@dataset().p_table_name"
+									}
+								}
+							}
+						}
+					]
 				}
 			}
 		],
