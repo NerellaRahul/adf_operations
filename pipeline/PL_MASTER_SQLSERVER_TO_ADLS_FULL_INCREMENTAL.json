@@ -1,6 +1,83 @@
 {
 	"name": "PL_MASTER_SQLSERVER_TO_ADLS_FULL_INCREMENTAL",
 	"properties": {
+		"activities": [
+			{
+				"name": "SP_Start_Pipeline_Log",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[ctl].[sp_start_pipeline_log]",
+					"storedProcedureParameters": {
+						"pipeline_name": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"run_id": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"load_type": {
+							"value": "@pipeline().parameters.p_load_type",
+							"type": "String"
+						},
+						"status": {
+							"value": "started",
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "LS_AZSQL_CONTROL",
+					"type": "LinkedServiceReference"
+				}
+			},
+			{
+				"name": "Lookup1",
+				"type": "Lookup",
+				"dependsOn": [
+					{
+						"activity": "SP_Start_Pipeline_Log",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": []
+			}
+		],
+		"parameters": {
+			"p_load_type": {
+				"type": "string",
+				"defaultValue": "INCREMENTAL"
+			}
+		},
+		"variables": {
+			"v_pipeline_run_id": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "real tiem Scenarios"
 		},
